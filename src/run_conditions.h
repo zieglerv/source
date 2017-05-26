@@ -49,16 +49,16 @@ class detectorCondition
 		
 	public:
 	detectorCondition(){is_present = 0; presentFlag = false;}
-		detectorCondition(string f)
-		{
-			factory    = f;
-			is_present = 0;
-			variation  = "main";
-			run_number = 1;
-			presentFlag = false;
-		}
-		~detectorCondition(){;}
-		
+	detectorCondition(string f)
+	{
+		factory    = f;
+		is_present = 0;
+		variation  = "main";
+		run_number = 1;
+		presentFlag = false;
+	}
+	~detectorCondition(){;}
+
 		void set_position(string X, string Y, string Z);
 		void set_rotation(string X, string Y, string Z);
 		void set_existance(string exist);
@@ -92,9 +92,6 @@ class runConditions
 		// Map of detectorCondition. Map Key = detector name.
 		map<string, detectorCondition> detectorConditionsMap;
 		
-		// Returns a map<string, string> with the detector systems present in gemc
-		// This map is then written in the output stream
-		map<string, string> getDetectorConditionsMap();
 		
 		
 		int get_run_number(string detector);

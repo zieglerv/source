@@ -67,60 +67,6 @@ double scan_number(const char *str)
 
 
 
-// assigns G4 units to a variable
-/// \fn double get_number(string v)
-/// \brief Return value of the input string, which may or may not
-/// contain units
-/// \param v input string. Ex: 10.2*cm
-/// \return value with correct G4 unit.
-double get_number(string v,int warn_no_unit)
-{
-	string value = trimSpacesFromString(v);
-	
-	if(value.find("*") == string::npos)
-	{
-		// no * found, this should be a number
-		// No unit is still ok if the number is 0
-		if(value.length()>0 && warn_no_unit && stringToDouble(value) != 0) cout << "Warning: All numbers should be paired with a unit: " << v << endl;
-		return stringToDouble(value);
-	}
-	
-	else
-	{
-		double answer = scan_number(value.substr(0, value.find("*")).c_str());
-		string units  = trimSpacesFromString(value.substr(value.find("*")+1, value.find("*") + 20));
-		if(       units == "m")         answer *= m;
-		else if(  units == "inches")    answer *= 2.54*cm;
-		else if(  units == "inch")      answer *= 2.54*cm;
-		else if(  units == "cm")        answer *= cm;
-		else if(  units == "mm")        answer *= mm;
-		else if(  units == "um")        answer *= 1E-6*m;
-		else if(  units == "fm")        answer *= 1E-15*m;
-		else if(  units == "deg")       answer *= deg;
-		else if(  units == "degrees")   answer *= deg;
-		else if(  units == "arcmin")    answer = answer/60.0*deg;
-		else if(  units == "rad")       answer *= rad;
-		else if(  units == "mrad")      answer *= mrad;
-		else if(  units == "eV")        answer *= eV;
-		else if(  units == "MeV")       answer *= MeV;
-		else if(  units == "KeV")       answer *= 0.001*MeV;
-		else if(  units == "GeV")       answer *= GeV;
-		else if(  units == "T")         answer *= tesla;
-		else if(  units == "T/m")       answer *= tesla/m;
-		else if(  units == "Tesla")     answer *= tesla;
-		else if(  units == "gauss")     answer *= gauss;
-		else if(  units == "kilogauss") answer *= gauss*1000;
-		else if(  units == "ns")        answer *= ns;
-		else if(  units == "na")        answer *= 1;
-		else if(  units == "counts")    answer *= 1;
-		else cout << ">" << units << "<: unit not recognized for string <" << v << ">" << endl;
-		return answer;
-	}
-	
-	return 0;
-}
-
-
 
 
 void print_vstring(vector<string> s)

@@ -36,47 +36,10 @@ inline string stringify(int x)
 }
 
 
-// from QVariant to string
-// OS dependance
-inline string qv_tostring(QVariant input)
-{
-	
-	string output;
-	
-	// In Windows we need to initialize the string from toAscii
-	// In Posix we need the toStdString
-	#ifdef _MSC_VER
-		output = input.toString().toLatin1();
-	#else
-		output = input.toString().toStdString();
-	#endif
-	
-	return output;
-}
-
-// from QString to string
-// OS dependance
-inline string qs_tostring(QString input)
-{
-	
-	string output;
-	
-	// In Windows we need to initialize the string from toAscii
-	// In Posix we need the toStdString
-	#ifdef _MSC_VER
-		output = input.toLatin1();
-	#else
-		output = input.toStdString();
-	#endif
-	
-	return output;
-}
-
 
 
 
 vector< vector<string> > dimensionstype(string);    ///< Returns dimensions nomenclature for different solid type
-double get_number(string,int warn_no_unit=0);       ///< Returns number with dimension from string, i.e. 100*cm
 vector<string> get_strings_except(string, string);  ///< returns a vector of strings from a stringstream, space is delimiter, ignore string with second argument
 void print_vstring(vector<string>);                 ///< prints each element of a string vector
 vector<string> get_info(string);                    ///< get information from strings such as "5*GeV, 2*deg, 10*deg", parses out parenthesis, commas, quotes
@@ -94,31 +57,7 @@ inline double get_number(QVariant input)
 }
 
 
-// returns a double from a string
-// notice, atof should work but it doesn't work on some Mac
-// atof may also not be thread safe
-// solving all this with stringstream
-inline double stringToDouble(string v)
-{
-	stringstream ss(trimSpacesFromString(v));
-	double d;
-	ss >> d;
-	return d;
-}
 
-
-// returns a double from a string
-// notice, atof should work but it doesn't work on some Mac
-// atof may also not be thread safe
-// solving all this with stringstream
-// from QString to string
-// OS dependance
-inline double qs_toDouble(QString input)
-{	
-	return stringToDouble(qs_tostring(input));
-}
-
-#endif
 
 
 
