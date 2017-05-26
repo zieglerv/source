@@ -100,40 +100,10 @@ class runConditions
 		
 		map<string, string> get_systems();
 	
-	private:
-		QDomDocument domDocument;
-		
+
 };
 
 int check_if_factory_is_needed(map<string, detectorCondition>, string);
-
-
-
-class runWeights
-{
-	public:
-		runWeights(goptions);
-		runWeights(){;}
-    	~runWeights(){;}
-
-		int runNo;
-		int getRunNumber(int n);
-		bool isNewRun;
-		int defaultRunNumber;
-	
-	private:
-		// map with weights as coming from the file
-		map<int, double> w;
-		
-		// map with numnber of events for each run, based on weight map
-		map<int, int> n;
-	
-		int startEvent;
-	
-	
-};
-
-
 
 
 #endif
