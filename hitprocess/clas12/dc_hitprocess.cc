@@ -98,6 +98,11 @@ static dcConstants initializeDCConstants(int runno, string digiVariation = "defa
 		dcc.deltatime_bfield_par2[sec][sl] = data[row][9];
 		dcc.deltatime_bfield_par3[sec][sl] = data[row][10];
 		dcc.deltatime_bfield_par4[sec][sl] = data[row][11];
+                pw.printf("#& sector superlayer component v0 deltanm tmax distbeta delta_bfield_coefficient b1 b2 b3 b4 delta_T0 c1 c2 c3\n");
+                //c1
+                dcc.R = data[row][13];
+                //c2
+                dcc.vmid = data[row][14];
 	}
 
 
@@ -434,7 +439,7 @@ map< string, vector <int> >  dc_HitProcess :: multiDgt(MHit* aHit, int hitn)
 // bfield = magnitude of field in tesla
 // sector      = sector
 // superlayer      = superlayer
-double dc_HitProcess :: calc_Time(double x, double dmax, double tmax, double alpha, double bfield, int sector, int superlayer)
+double dc_HitProcess :: calc_Time_old(double x, double dmax, double tmax, double alpha, double bfield, int sector, int superlayer)
 {
 
 	double rtime = 0.0;
@@ -477,6 +482,46 @@ double dc_HitProcess :: calc_Time(double x, double dmax, double tmax, double alp
 
 	return rtime;
 }
+// returns a time in ns give:
+// x      = distance from the wire, in cm
+// dmax   = cell size in superlayer
+// tmax   = t max in superlayer
+// alpha  = polar angle of the track
+// bfield = magnitude of field in tesla
+// sector      = sector
+// superlayer      = superlayer
+double dc_HitProcess :: calc_Time(double x, double dmax, double tmax, double alpha, double bfield, int sector, int superlayer)
+{        
+        if(x>dmax)
+            x=dmax;
+        double time = 0;
+        // alpha correction 
+        double cos30minusalpha=Math.cos(Math.toRadians(30.-alpha));
+        double dmaxalpha = dmax*cos30minusalpha;
+        double xhatalpha = x/dmaxalpha;
+        //   rcapital is an intermediate parameter
+        double rcapital = dcc.R*dmax;
+        //   delt is another intermediate parameter
+        double delt=tmax-dmax/dcc.v0;
+        double delv=1./dcc.vmid-1./dcc.v0;
+        //   now calculate the primary parameters a, b, c, d
+        
+        double c = ((3.*delv)/(dcc.R*dmax)+(12*dcc.R*dcc.R*delt)/(2.*(1-2*dcc.R)*
+            (dmax*dmax)));
+        c = c /(4.-(1.-6.*dcc.R*dcc.R)/(1.-2.*dcc.R));
+        double b = delv/(rcapital*rcapital) - 4.*c/(3.*rcapital);
+        double d = 1/dcc.v0;
+        double a = (tmax -  b*dmaxalpha*dmaxalpha*dmaxalpha - 
+                c*dmaxalpha*dmaxalpha - d*dmaxalpha)/(dmaxalpha*dmaxalpha*dmaxalpha*dmaxalpha) ;       
+        time = a*x*x*x*x + b*x*x*x + c*x*x + d*x ;
+        
+        double deltatime_bfield = dcc.delta_bfield_coefficient[sector][superlayer]*pow(bfield,2)*tmax*(dcc.deltatime_bfield_par1[sector][superlayer]*xhatalpha+dcc.deltatime_bfield_par2[sector][superlayer]*pow(xhatalpha, 2)+ dcc.deltatime_bfield_par3[sector][superlayer]*pow(xhatalpha, 3)+dcc.deltatime_bfield_par4[sector][superlayer]*pow(xhatalpha, 4));
+
+	//cout<<"dt = "<<deltatime_bfield<<" C0 "<<dcc.delta_bfield_coefficient[sector][superlayer]<<endl;
+	//calculate the time at alpha deg. and at a non-zero bfield
+	time += deltatime_bfield;
+        return time;
+    }
 
 //Taking care of time walks due to discrete ionization processes:
 // x       = distance from the wire, in cm
