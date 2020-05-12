@@ -309,7 +309,13 @@ map<string, double> dc_HitProcess :: integrateDgt(MHit* aHit, int hitn)
 			//Now calculate alpha according to Macs definition:
 			alpha = asin((const1*rotated_vector.x() + const2*rotated_vector.y())/rotated_vector.mag())/deg;
 
-
+                        //B-field correction
+                        double theta0 = Math.acos(1-0.02*B);
+                        // correct alpha with theta0, the angle corresponding to the isochrone lines twist due to the electric field
+                        thisMgnf = mgnf[s]; // Given in Tesla
+                        double theta0 = Math.acos(1-0.02*fabs(thisMgnf))/deg;
+                        alpha-= dcc.fieldScale*theta0;
+            
 			// compute reduced alpha (VZ)
 			// alpha in radians
 			double ralpha = fabs(alpha*deg);
@@ -326,7 +332,7 @@ map<string, double> dc_HitProcess :: integrateDgt(MHit* aHit, int hitn)
 			doca = DOCA.mag();
 			if(DOCA.y() >=0 ) LR = 1;
 			else  LR = -1;
-			thisMgnf = mgnf[s]; // Given in Tesla
+			
 
 			//Get beta-value of the particle:
 			beta_particle = mom[s].mag()/E[s];
